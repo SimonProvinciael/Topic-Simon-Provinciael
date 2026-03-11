@@ -401,20 +401,26 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
                 {/* Reactions */}
                 {Object.keys(message.reactions || {}).length > 0 && (
                   <div className="flex flex-wrap gap-1 mt-2">
-                    {Object.entries(message.reactions || {}).map(([emoji, users]) => (
-                      <button
-                        key={emoji}
-                        onClick={() => handleAddReaction(message.id, emoji)}
-                        className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold transition-colors ${
-                          users.includes(userName)
-                            ? 'bg-blue-200 text-blue-800'
-                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                        }`}
-                        title={users.join(', ')}
-                      >
-                        {emoji} <span>{users.length}</span>
-                      </button>
-                    ))}
+                    {Object.entries(message.reactions || {}).map(([emoji, users]) => {
+                      // Ensure users is an array
+                      const userList = Array.isArray(users) ? users : [];
+                      if (userList.length === 0) return null;
+                      
+                      return (
+                        <button
+                          key={emoji}
+                          onClick={() => handleAddReaction(message.id, emoji)}
+                          className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold transition-colors ${
+                            userList.includes(userName)
+                              ? 'bg-blue-200 text-blue-800'
+                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                          }`}
+                          title={userList.join(', ')}
+                        >
+                          {emoji} <span>{userList.length}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
 

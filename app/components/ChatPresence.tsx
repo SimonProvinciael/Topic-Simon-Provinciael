@@ -26,6 +26,7 @@ export const ChatPresence: React.FC<{ channelName: string }> = ({ channelName })
   const [selectedActivity, setSelectedActivity] = useState('chatting');
   const [statusMessage, setStatusMessage] = useState('');
   const [isEditingStatus, setIsEditingStatus] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   // Trigger re-render every second to update time ago
   useEffect(() => {
@@ -198,6 +199,42 @@ export const ChatPresence: React.FC<{ channelName: string }> = ({ channelName })
             <p className="text-xs text-gray-500 font-medium">INGELOGD ALS</p>
             <p className="text-sm font-semibold text-gray-900 truncate">{userName}</p>
           </div>
+          {/* Profile Menu Button */}
+          <div className="relative">
+            <button
+              onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
+              title="Profiel instellingen"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2m0 7a1 1 0 110-2 1 1 0 010 2m0 7a1 1 0 110-2 1 1 0 010 2" />
+              </svg>
+            </button>
+
+            {/* Dropdown Menu */}
+            {profileMenuOpen && (
+              <div className="absolute right-0 top-10 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-max">
+                <button
+                  onClick={() => {
+                    setIsEditingName(true);
+                    setProfileMenuOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 border-b border-gray-200 font-medium text-gray-800"
+                >
+                  ✏️ Naam wijzigen
+                </button>
+                <button
+                  onClick={() => {
+                    setIsEditingStatus(true);
+                    setProfileMenuOpen(false);
+                  }}
+                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-50 font-medium text-gray-800"
+                >
+                  ⚙️ Status instellen
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {isEditingName ? (
@@ -215,24 +252,17 @@ export const ChatPresence: React.FC<{ channelName: string }> = ({ channelName })
                 onClick={handleSaveName}
                 className="flex-1 px-3 py-1.5 bg-emerald-500 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors shadow-sm"
               >
-                Opslaan
+                ✓ Opslaan
               </button>
               <button
                 onClick={handleCancelName}
                 className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-400 transition-colors shadow-sm"
               >
-                Annuleren
+                ✕ Annuleren
               </button>
             </div>
           </div>
-        ) : (
-          <button
-            onClick={() => setIsEditingName(true)}
-            className="w-full px-2 py-1.5 bg-indigo-500 text-white rounded-lg text-xs font-semibold hover:bg-indigo-600 transition-colors shadow-sm"
-          >
-            Naam wijzigen
-          </button>
-        )}
+        ) : null}
 
         {/* Activity & Status Section */}
         {isEditingStatus ? (
@@ -270,24 +300,17 @@ export const ChatPresence: React.FC<{ channelName: string }> = ({ channelName })
                 onClick={handleSaveStatus}
                 className="flex-1 px-3 py-1.5 bg-emerald-500 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors"
               >
-                Opslaan
+                ✓ Opslaan
               </button>
               <button
                 onClick={() => setIsEditingStatus(false)}
                 className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-400 transition-colors"
               >
-                Annuleren
+                ✕ Annuleren
               </button>
             </div>
           </div>
-        ) : (
-          <button
-            onClick={() => setIsEditingStatus(true)}
-            className="w-full px-2 py-1.5 bg-purple-500 text-white rounded-lg text-xs font-semibold hover:bg-purple-600 transition-colors shadow-sm"
-          >
-            ⚙️ Status instellen
-          </button>
-        )}
+        ) : null}
       </div>
 
       {/* Online Users Section */}

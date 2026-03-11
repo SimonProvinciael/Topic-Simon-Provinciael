@@ -50,9 +50,9 @@ function ChatContent() {
 
       {/* Main Layout */}
       <div className="flex h-[calc(100vh-80px)] lg:h-auto gap-0 lg:gap-6 px-0 lg:px-4 pb-0 lg:pb-4">
-      {/* Sidebar - Sliding on Mobile, Static on Desktop */}
+        {/* Sidebar - Sliding on Mobile, Static on Desktop */}
         <div
-          className={`fixed left-0 top-20 bottom-0 w-64 bg-white rounded-r-xl shadow-2xl z-50 transform lg:relative lg:top-auto lg:bottom-auto lg:shadow-none lg:bg-transparent lg:rounded-none lg:w-64 ${
+          className={`fixed right-0 top-20 bottom-0 w-64 bg-white rounded-l-xl shadow-2xl z-50 transform lg:relative lg:top-auto lg:bottom-auto lg:right-auto lg:shadow-none lg:bg-transparent lg:rounded-none lg:w-64 ${
             sidebarOpen ? 'animate-slide-in' : 'hidden lg:block lg:animate-none'
           }`}
         >
