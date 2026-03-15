@@ -98,11 +98,18 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
     // Subscribe to messages
     const messageSubscription = (message: Message) => {
       console.log('Received message:', message);
+      
+      // Ignore non-message events (reactions, pins, etc)
+      if (message.name !== 'message') {
+        console.log('Ignoring non-message event:', message.name);
+        return;
+      }
+      
       const chatMessage: ChatMessage = {
         id: message.id || `msg_${Date.now()}`,
         clientId: message.clientId || 'unknown',
         name: message.data?.name || message.clientId || 'unknown',
-        text: message.data?.text || String(message.data),
+        text: message.data?.text || '',
         timestamp: message.timestamp || Date.now(),
         reactions: message.data?.reactions || {},
         isPinned: message.data?.isPinned || false,
@@ -116,6 +123,20 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
     channel.subscribe(messageSubscription).catch((err) => {
       console.error('Error subscribing to messages:', err);
       setError(`Subscribe error: ${err.message}`);
+    });
+
+    // Subscribe to reaction updates
+    const reactionSubscription = (message: Message) => {
+      if (message.name === 'reaction') {
+        const { messageId, reactions } = message.data;
+        setMessages((prev) =>
+          prev.map((m) => (m.id === messageId ? { ...m, reactions } : m))
+        );
+      }
+    };
+
+    channel.subscribe(reactionSubscription).catch((err) => {
+      console.error('Error subscribing to reactions:', err);
     });
 
     // Check connection status
@@ -148,7 +169,7 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
             id: message.id || `msg_${Date.now()}`,
             clientId: message.clientId || 'unknown',
             name: message.data?.name || message.clientId || 'unknown',
-            text: message.data?.text || String(message.data),
+            text: message.data?.text || '',
             timestamp: message.timestamp || Date.now(),
             reactions: message.data?.reactions || {},
             isPinned: message.data?.isPinned || false,
@@ -167,6 +188,7 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
     return () => {
       try {
         channel.unsubscribe(messageSubscription);
+        channel.unsubscribe(reactionSubscription);
         ably.connection.off('connected', onConnected);
         ably.connection.off('disconnected', onDisconnected);
         ably.connection.off('failed', onFailed);
@@ -305,7 +327,7 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
   return (
     <div className="flex flex-col h-[calc(100vh-120px)] lg:h-full bg-white rounded-xl shadow-md lg:shadow-lg overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-t-xl flex-shrink-0">
+      <div className="text-white p-4 rounded-t-xl flex-shrink-0" style={{ backgroundColor: "#315219" }}>
         <div className="flex justify-between items-center">
           <h2 className="text-lg lg:text-xl font-bold">Chat</h2>
           <div className="flex items-center gap-3">
@@ -324,15 +346,23 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
         </div>
       </div>
 
+      {/* Toolbar */}
+      <div className="bg-gray-100 border-b border-gray-200 px-4 py-2 flex-shrink-0 flex items-center gap-2">
+        <div className="flex-1"></div>
+        <span className="text-xs text-gray-600 font-medium">
+          {messages.length} {messages.length === 1 ? 'bericht' : 'berichten'}
+        </span>
+      </div>
+
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border-b border-red-400 text-red-700 px-4 py-2">
+        <div className="bg-red-50 border-b border-red-400 text-red-700 px-4 py-2 flex-shrink-0">
           <p className="text-xs lg:text-sm">{error}</p>
         </div>
       )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-3 lg:p-4 space-y-4 bg-gray-50">
+      <div className="flex-1 overflow-y-auto p-3 lg:p-4 space-y-4 bg-gray-50 scrollbar-visible">
         {messages.length === 0 ? (
           <div className="text-center text-gray-500 py-8">
             <p className="text-sm">Geen berichten nog. Wees de eerste om te chatten!</p>
@@ -344,7 +374,7 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
               className={`flex gap-2 animate-fade-in ${message.isPinned ? 'bg-yellow-50 p-2 rounded-lg border-l-4 border-yellow-400' : ''}`}
             >
               <div className="flex-shrink-0">
-                <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                <div className="w-8 h-8 text-white rounded-full flex items-center justify-center text-xs font-bold" style={{ backgroundColor: "#315219" }}>
                   {message.name.substring(0, 2).toUpperCase()}
                 </div>
               </div>
@@ -363,13 +393,15 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
                   )}
                 </div>
                 <div className="bg-white border border-gray-200 rounded-lg p-2 lg:p-3 mt-1">
-                  <p className="text-sm lg:text-base text-gray-800 break-words">
-                    {message.text}
-                  </p>
+                  {message.text && (
+                    <p className="text-sm lg:text-base text-gray-800 break-words">
+                      {message.text}
+                    </p>
+                  )}
 
                   {/* File display */}
                   {message.file && (
-                    <div className="mt-2 border-t border-gray-200 pt-2">
+                    <div className={message.text ? "mt-2 border-t border-gray-200 pt-2" : ""}>
                       {message.file.type.startsWith('image/') ? (
                         <img
                           src={message.file.data}
@@ -384,15 +416,16 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
                         />
                       ) : (
                         <a
-                          href={message.file.data}
-                          download={message.file.name}
-                          className="inline-flex items-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors text-sm text-blue-700"
+                           href={message.file.data}
+                           download={message.file.name}
+                           className="inline-flex items-center gap-2 px-3 py-2 border border-green-200 rounded-lg hover:bg-green-50 transition-colors text-sm text-green-700"
+                           style={{ backgroundColor: "rgba(49, 82, 25, 0.05)" }}
                         >
-                          📎 {message.file.name}
-                          <span className="text-xs text-blue-600">
-                            ({(message.file.size / 1024).toFixed(1)} KB)
-                          </span>
-                        </a>
+                           📎 {message.file.name}
+                           <span className="text-xs" style={{ color: "#315219" }}>
+                             ({(message.file.size / 1024).toFixed(1)} KB)
+                           </span>
+                         </a>
                       )}
                     </div>
                   )}
@@ -412,9 +445,10 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
                           onClick={() => handleAddReaction(message.id, emoji)}
                           className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold transition-colors ${
                             userList.includes(userName)
-                              ? 'bg-blue-200 text-blue-800'
+                              ? 'text-white'
                               : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                           }`}
+                          style={userList.includes(userName) ? { backgroundColor: "#315219" } : {}}
                           title={userList.join(', ')}
                         >
                           {emoji} <span>{userList.length}</span>
@@ -479,12 +513,13 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
         className="border-t border-gray-200 p-3 lg:p-4 bg-white rounded-b-xl flex-shrink-0 space-y-2"
       >
         {selectedFile && (
-          <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-2">
-            <span className="text-xs text-blue-800">📎 {selectedFile.name}</span>
+          <div className="flex items-center justify-between border rounded-lg p-2" style={{ backgroundColor: "rgba(49, 82, 25, 0.05)", borderColor: "#315219" }}>
+            <span className="text-xs" style={{ color: "#315219" }}>📎 {selectedFile.name}</span>
             <button
               type="button"
               onClick={() => setSelectedFile(null)}
-              className="text-blue-600 hover:text-blue-800 text-sm"
+              className="text-sm hover:opacity-70"
+              style={{ color: "#315219" }}
             >
               ✕
             </button>
@@ -496,7 +531,8 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
             value={inputValue}
             onChange={handleInputChange}
             placeholder={isConnected ? "Typ een bericht..." : "Wacht tot verbinding..."}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 text-gray-900 placeholder-gray-500 font-medium text-sm"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none disabled:bg-gray-100 text-gray-900 placeholder-gray-500 font-medium text-sm"
+            style={{ "--tw-ring-color": "#315219" } as React.CSSProperties}
             disabled={!isConnected}
           />
           <label className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer" title="Bestand toevoegen">
@@ -513,7 +549,16 @@ export const ChatMessages: React.FC<{ channelName: string }> = ({ channelName })
           <button
             type="submit"
             disabled={!isConnected || (!inputValue.trim() && !selectedFile)}
-            className="px-4 lg:px-6 py-2 bg-blue-500 text-white rounded-lg font-semibold hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm flex-shrink-0"
+            className="px-4 lg:px-6 py-2 text-white rounded-lg font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors text-sm flex-shrink-0"
+            style={{ backgroundColor: !isConnected || (!inputValue.trim() && !selectedFile) ? "#999" : "#315219" }}
+            onMouseEnter={(e) => {
+              const isDisabled = !isConnected || (!inputValue.trim() && !selectedFile);
+              if (!isDisabled) (e.target as HTMLButtonElement).style.backgroundColor = "#4a6b27";
+            }}
+            onMouseLeave={(e) => {
+              const isDisabled = !isConnected || (!inputValue.trim() && !selectedFile);
+              if (!isDisabled) (e.target as HTMLButtonElement).style.backgroundColor = "#315219";
+            }}
           >
             <span className="hidden lg:inline">Verzenden</span>
             <span className="lg:hidden">⤴</span>

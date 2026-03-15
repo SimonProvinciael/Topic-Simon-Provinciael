@@ -57,7 +57,8 @@ export const ChatSearch: React.FC<{ messages: any[] }> = ({ messages }) => {
             placeholder="Zoeken in berichten..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 placeholder-gray-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none text-gray-900 placeholder-gray-500"
+            style={{ "--tw-ring-color": "#315219" } as React.CSSProperties}
             autoFocus
           />
 

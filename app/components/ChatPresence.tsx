@@ -185,14 +185,14 @@ export const ChatPresence: React.FC<{ channelName: string }> = ({ channelName })
   return (
     <div className="w-full lg:w-64 bg-white rounded-xl lg:rounded-xl shadow-md lg:shadow-md flex flex-col h-full lg:h-full border border-gray-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 text-white p-4 rounded-t-xl">
+      <div className="text-white p-4 rounded-t-xl" style={{ backgroundColor: "#315219" }}>
         <h3 className="text-base font-semibold">Je Profiel</h3>
       </div>
 
       {/* Profile Section */}
       <div className="p-4 border-b border-gray-100 space-y-3">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-md">
+          <div className="w-12 h-12 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-md" style={{ backgroundColor: "#315219" }}>
             {userName.substring(0, 2).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
@@ -240,27 +240,29 @@ export const ChatPresence: React.FC<{ channelName: string }> = ({ channelName })
         {isEditingName ? (
           <div className="space-y-2 animate-fade-in">
             <input
-              type="text"
-              value={inputName}
-              onChange={(e) => setInputName(e.target.value)}
-              placeholder="Voer je naam in..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm font-medium transition-all text-gray-900 placeholder-gray-500"
-              autoFocus
-            />
-            <div className="flex gap-2">
-              <button
-                onClick={handleSaveName}
-                className="flex-1 px-3 py-1.5 bg-emerald-500 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors shadow-sm"
-              >
-                ✓ Opslaan
-              </button>
-              <button
-                onClick={handleCancelName}
-                className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-400 transition-colors shadow-sm"
-              >
-                ✕ Annuleren
-              </button>
-            </div>
+               type="text"
+               value={inputName}
+               onChange={(e) => setInputName(e.target.value)}
+               placeholder="Voer je naam in..."
+               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none text-sm font-medium transition-all text-gray-900 placeholder-gray-500"
+               style={{ "--tw-ring-color": "#315219" } as React.CSSProperties}
+               autoFocus
+             />
+             <div className="flex gap-2">
+               <button
+                 onClick={handleSaveName}
+                 className="flex-1 px-3 py-1.5 text-white rounded-lg text-xs font-semibold transition-colors shadow-sm hover:opacity-90"
+                 style={{ backgroundColor: "#315219" }}
+               >
+                 ✓ Opslaan
+               </button>
+               <button
+                 onClick={handleCancelName}
+                 className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-400 transition-colors shadow-sm"
+               >
+                 ✕ Annuleren
+               </button>
+             </div>
           </div>
         ) : null}
 
@@ -271,11 +273,12 @@ export const ChatPresence: React.FC<{ channelName: string }> = ({ channelName })
               <label className="text-xs font-medium text-gray-700 block mb-1">
                 Status
               </label>
-              <select
-                value={selectedActivity}
-                onChange={(e) => setSelectedActivity(e.target.value)}
-                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
+               <select
+                 value={selectedActivity}
+                 onChange={(e) => setSelectedActivity(e.target.value)}
+                 className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-900 focus:outline-none"
+                 style={{ "--tw-ring-color": "#315219" } as React.CSSProperties}
+               >
                 {activityOptions.map((opt) => (
                   <option key={opt} value={opt}>
                     {opt.charAt(0).toUpperCase() + opt.slice(1)}
@@ -287,38 +290,40 @@ export const ChatPresence: React.FC<{ channelName: string }> = ({ channelName })
               <label className="text-xs font-medium text-gray-700 block mb-1">
                 Bericht
               </label>
-              <input
-                type="text"
-                value={statusMessage}
-                onChange={(e) => setStatusMessage(e.target.value)}
-                placeholder="Bijv. 'In scouting activiteit'"
-                className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
+               <input
+                 type="text"
+                 value={statusMessage}
+                 onChange={(e) => setStatusMessage(e.target.value)}
+                 placeholder="Bijv. 'In scouting activiteit'"
+                 className="w-full px-3 py-1.5 border border-gray-300 rounded-lg text-xs text-gray-900 placeholder-gray-500 focus:outline-none"
+                 style={{ "--tw-ring-color": "#315219" } as React.CSSProperties}
+               />
             </div>
-            <div className="flex gap-2">
-              <button
-                onClick={handleSaveStatus}
-                className="flex-1 px-3 py-1.5 bg-emerald-500 text-white rounded-lg text-xs font-semibold hover:bg-emerald-600 transition-colors"
-              >
-                ✓ Opslaan
-              </button>
-              <button
-                onClick={() => setIsEditingStatus(false)}
-                className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-400 transition-colors"
-              >
-                ✕ Annuleren
-              </button>
-            </div>
+             <div className="flex gap-2">
+               <button
+                 onClick={handleSaveStatus}
+                 className="flex-1 px-3 py-1.5 text-white rounded-lg text-xs font-semibold transition-colors hover:opacity-90"
+                 style={{ backgroundColor: "#315219" }}
+               >
+                 ✓ Opslaan
+               </button>
+               <button
+                 onClick={() => setIsEditingStatus(false)}
+                 className="flex-1 px-3 py-1.5 bg-gray-300 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-400 transition-colors"
+               >
+                 ✕ Annuleren
+               </button>
+             </div>
           </div>
         ) : null}
       </div>
 
-      {/* Online Users Section */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-4 py-3">
-          <h3 className="text-base font-semibold">Online</h3>
-          <p className="text-xs text-emerald-100 mt-0.5">{users.length} {users.length === 1 ? 'persoon' : 'personen'}</p>
-        </div>
+       {/* Online Users Section */}
+       <div className="flex-1 flex flex-col overflow-hidden">
+         <div className="text-white px-4 py-3" style={{ backgroundColor: "#4a6b27" }}>
+           <h3 className="text-base font-semibold">Online</h3>
+           <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.8)" }}>{users.length} {users.length === 1 ? 'persoon' : 'personen'}</p>
+         </div>
 
         {/* Error Message */}
         {error && (
@@ -344,19 +349,19 @@ export const ChatPresence: React.FC<{ channelName: string }> = ({ channelName })
                   className="flex items-center gap-3 p-2.5 bg-gradient-to-r from-gray-50 to-white rounded-lg hover:from-indigo-50 hover:to-blue-50 transition-colors border border-gray-100 hover:border-indigo-200"
                 >
                   <div className="relative flex-shrink-0">
-                    <div className="w-9 h-9 bg-gradient-to-br from-indigo-400 to-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-md">
-                      {user.name.substring(0, 2).toUpperCase()}
-                    </div>
-                    <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full shadow-sm" />
-                  </div>
+                     <div className="w-9 h-9 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-md" style={{ backgroundColor: "#315219" }}>
+                       {user.name.substring(0, 2).toUpperCase()}
+                     </div>
+                     <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full shadow-sm" />
+                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-gray-800 truncate">
                       {user.name}
                     </p>
-                    <div className="flex items-center gap-1 flex-wrap">
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">
-                        {user.activity || 'chatting'}
-                      </span>
+                     <div className="flex items-center gap-1 flex-wrap">
+                       <span className="text-xs px-2 py-0.5 rounded-full font-medium text-white" style={{ backgroundColor: "#4a6b27" }}>
+                         {user.activity || 'chatting'}
+                       </span>
                       {user.statusMessage && (
                         <span className="text-xs text-gray-600 italic truncate">
                           "{user.statusMessage}"
