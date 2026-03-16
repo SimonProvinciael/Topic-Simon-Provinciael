@@ -38,7 +38,7 @@ function ChatContent() {
       {/* Desktop Header */}
       <div className="hidden lg:block mb-8 pt-8 px-4 text-center">
         <h1 className="text-4xl font-bold mb-2" style={{ color: "#315219" }}>Ably Chat - Demo</h1>
-        <p className="text-gray-600">Real-time messaging powered by Ably</p>
+        {/*<p className="text-gray-600">Real-time messaging powered by Ably</p>*/}
       </div>
 
       {/* Mobile Overlay */}
