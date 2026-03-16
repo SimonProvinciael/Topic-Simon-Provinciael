@@ -22,7 +22,7 @@ function ChatContent() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100" style={{ "--scouts-primary": "#315219" } as React.CSSProperties}>
       {/* Mobile Header */}
       <div className="lg:hidden bg-white border-b border-gray-200 p-4 flex items-center justify-between sticky top-0 z-30">
-        <h1 className="text-xl font-bold" style={{ color: "#315219" }}>Scouts Chat</h1>
+        <h1 className="text-xl font-bold" style={{ color: "#315219" }}>Ably Chat - Demo</h1>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 rounded-lg text-white transition-colors"
@@ -37,7 +37,7 @@ function ChatContent() {
 
       {/* Desktop Header */}
       <div className="hidden lg:block mb-8 pt-8 px-4 text-center">
-        <h1 className="text-4xl font-bold mb-2" style={{ color: "#315219" }}>Scouts Chat</h1>
+        <h1 className="text-4xl font-bold mb-2" style={{ color: "#315219" }}>Ably Chat - Demo</h1>
         <p className="text-gray-600">Real-time messaging powered by Ably</p>
       </div>
 
